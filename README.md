@@ -6,6 +6,26 @@ The purpose of this is so blocks with complicated orientation-placement behavior
 (like More Red's logic gates or Hyperbox's hyperboxes, which can be oriented 24 different ways depending on where the player clicks)
 can show the player how the block will be placed.
 
+## Depending on the Mod
+
+Mods that wish to jarjar Preview Placement can do so via jarjar:
+
+```gradle
+repositories {
+	maven {url = "https://maven.commoble.net"}
+}
+
+dependencies {
+	implementation "net.commoble.preview_placement:preview_placement:${preview_placement_version}"
+	jarJar(group: "net.commoble.preview_placement", name: "preview_placement", version: "[${preview_placement_version}, ${preview_placement_max_version})")
+}
+```
+
+Available versions can be found on the maven: https://maven.commoble.net/net/commoble/preview_placement/preview_placement/
+
+Compiling against the mod enables datagen helpers in the PlacementPreviewDefinition class. If these sources aren't needed, cursemaven can be used instead for runtime-only dependencies: https://cursemaven.com/
+
+
 ## Placement Preview Files
 
 Placement Preview files specify which items should render placement previews and what model should be rendered for each blockstate which can be placed.
