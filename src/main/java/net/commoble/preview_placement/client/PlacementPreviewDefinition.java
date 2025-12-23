@@ -39,7 +39,7 @@ public final class PlacementPreviewDefinition
 	public static void addDataProvider(GatherDataEvent event, Map<Identifier, Map<Block, Map<String,Variant>>> variants)
 	{
 		DataGenerator generator = event.getGenerator();
-		generator.addProvider(true, JsonDataProvider.create(event.getLookupProvider(), generator.getPackOutput(), generator, PackOutput.Target.RESOURCE_PACK, "morered/placement_preview", CODEC, variants));
+		generator.addProvider(true, JsonDataProvider.create(event.getLookupProvider(), generator.getPackOutput(), generator, PackOutput.Target.RESOURCE_PACK, "preview_placement/placement_preview", CODEC, variants));
 	}
 	
 	/**
