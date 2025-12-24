@@ -3,7 +3,6 @@ package net.commoble.preview_placement.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemModelResolver;
@@ -13,6 +12,7 @@ import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelState;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -32,7 +32,7 @@ public record PlacementPreview(ItemStack stack, ModelState rotation)
 		resolver.updateForTopItem(itemState, stack, ItemDisplayContext.NONE, level, player, player.getId());
 		int blockLight = level.getBrightness(LightLayer.BLOCK, placePos);
 		int skyLight = level.getBrightness(LightLayer.SKY, placePos);
-		int packedLight = LightTexture.pack(blockLight, skyLight);
+		int packedLight = LightCoordsUtil.pack(blockLight, skyLight);
 		return new PlacementPreviewRenderState(itemState, placePos, this.rotation, packedLight);
 	}
 	
