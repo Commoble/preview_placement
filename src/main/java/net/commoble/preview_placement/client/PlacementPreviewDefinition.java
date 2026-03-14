@@ -11,7 +11,7 @@ import com.mojang.math.Quadrant;
 import com.mojang.serialization.Codec;
 
 import net.commoble.preview_placement.JsonDataProvider;
-import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.dispatch.Variant;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;

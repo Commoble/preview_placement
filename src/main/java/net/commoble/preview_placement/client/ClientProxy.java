@@ -49,10 +49,9 @@ public class ClientProxy
 		if (ClientProxy.CLIENTCONFIG.showPlacementPreview().get())
 		{
 			LocalPlayer player = Minecraft.getInstance().player;
-			if (player != null && player.level() != null)
+			if (player != null)
 			{
 				InteractionHand hand = player.getUsedItemHand();
-				hand = hand == null ? InteractionHand.MAIN_HAND : hand;
 				ItemStack stack = player.getItemInHand(hand);
 				Item item = stack.getItem();
 				if (item instanceof BlockItem blockItem && PlacementPreviewReloadListener.doesItemHavePreview(blockItem))
@@ -67,11 +66,14 @@ public class ClientProxy
 					if (existingState.isAir() || existingState.canBeReplaced())
 					{
 						BlockState state = block.getStateForPlacement(new BlockPlaceContext(player, hand, stack, rayTrace));
-						@Nullable PlacementPreview preview = PlacementPreviewReloadListener.getPlacementPreview(state);
-						if (preview != null)
+						if (state != null)
 						{
-							event.addCustomRenderer(preview.extractRenderState(world,placePos,player));
-						}						
+							@Nullable PlacementPreview preview = PlacementPreviewReloadListener.getPlacementPreview(state);
+							if (preview != null)
+							{
+								event.addCustomRenderer(preview.extractRenderState(world,placePos,player));
+							}	
+						}					
 					}
 				}
 			}

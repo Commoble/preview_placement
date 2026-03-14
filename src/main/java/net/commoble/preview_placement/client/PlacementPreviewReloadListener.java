@@ -10,9 +10,9 @@ import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
 
-import net.minecraft.client.renderer.block.model.Variant;
-import net.minecraft.client.renderer.block.model.VariantSelector;
-import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.renderer.block.dispatch.ModelState;
+import net.minecraft.client.renderer.block.dispatch.Variant;
+import net.minecraft.client.renderer.block.dispatch.VariantSelector;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.FileToIdConverter;
@@ -62,7 +62,12 @@ public class PlacementPreviewReloadListener extends SimpleJsonResourceReloadList
 	}
 
 	@Override
-	protected void apply(Map<Identifier, Map<Block, Map<String,Variant>>> data, ResourceManager resourceManager, ProfilerFiller profiler)
+	protected void apply(@Nullable Map<Identifier, Map<Block, Map<String,Variant>>> data, ResourceManager resourceManager, ProfilerFiller profiler)
+	{
+		applyWithFixForEclipse(data == null ? Map.of() : data, resourceManager, profiler);
+	}
+	
+	protected void applyWithFixForEclipse(Map<Identifier, Map<Block, Map<String,Variant>>> data, ResourceManager resourceManager, ProfilerFiller profiler)
 	{
 		Map<BlockState, Variant> results = new HashMap<>();
 		Set<Item> relevantItems = new HashSet<>();
@@ -71,8 +76,8 @@ public class PlacementPreviewReloadListener extends SimpleJsonResourceReloadList
 		{
 			Map<BlockState,Variant> stateVariants = new HashMap<>();
 			Identifier itemId = entry.getKey();
-			@Nullable Item item = BuiltInRegistries.ITEM.getValue(itemId);
-			if (item == null || item == Items.AIR)
+			Item item = BuiltInRegistries.ITEM.getValue(itemId);
+			if (item == Items.AIR)
 			{
 				LOGGER.error("Found placement preview file for invalid item id: {}", itemId);
 				continue;

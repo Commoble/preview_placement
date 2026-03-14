@@ -3,15 +3,15 @@ package net.commoble.preview_placement.client;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.TextureSlots;
+import net.minecraft.client.renderer.block.dispatch.ModelState;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelDebugName;
-import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.client.resources.model.QuadCollection;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.cuboid.CuboidModel;
+import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.QuadCollection;
+import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.core.Direction;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.context.ContextMap;
@@ -24,17 +24,17 @@ import net.neoforged.neoforge.client.model.quad.BakedColors.PerVertex;
 /**
  * 
  */
-public enum PlacementPreviewModelLoader implements UnbakedModelLoader<BlockModel>
+public enum PlacementPreviewModelLoader implements UnbakedModelLoader<CuboidModel>
 {
 	INSTANCE;
 
 	@Override
-	public BlockModel read(JsonObject modelContents, JsonDeserializationContext context)
+	public CuboidModel read(JsonObject modelContents, JsonDeserializationContext context)
 	{
 		// we use the vanilla model loader to parse everything
-        BlockModel baseModel = context.deserialize(modelContents.get("model"), BlockModel.class);
+		CuboidModel baseModel = context.deserialize(modelContents.get("model"), CuboidModel.class);
         PlacementPreviewModelGeometry geometry = new PlacementPreviewModelGeometry(baseModel);
-        return new BlockModel(
+        return new CuboidModel(
 			geometry,
 			baseModel.guiLight(),
 			baseModel.ambientOcclusion(),
@@ -42,7 +42,6 @@ public enum PlacementPreviewModelLoader implements UnbakedModelLoader<BlockModel
 			baseModel.textureSlots(),
 			baseModel.parent(),
 			baseModel.rootTransform(),
-			baseModel.renderTypeGroup(),
 			baseModel.partVisibility());
 	}
 	
@@ -86,7 +85,7 @@ public enum PlacementPreviewModelLoader implements UnbakedModelLoader<BlockModel
 				baseQuad.packedUV3(),
 				baseQuad.tintIndex(),
 				baseQuad.direction(),
-				baseQuad.sprite(),
+				baseQuad.spriteInfo(),
 				baseQuad.shade(),
 				baseQuad.lightEmission(),
 				baseQuad.bakedNormals(),
