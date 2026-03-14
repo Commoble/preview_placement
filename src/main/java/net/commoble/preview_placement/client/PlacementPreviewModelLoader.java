@@ -3,13 +3,16 @@ package net.commoble.preview_placement.client;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.dispatch.ModelState;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelDebugName;
 import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.client.resources.model.cuboid.CuboidModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.geometry.BakedQuad.SpriteInfo;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.core.Direction;
@@ -74,6 +77,7 @@ public enum PlacementPreviewModelLoader implements UnbakedModelLoader<CuboidMode
 		private static BakedQuad getTranslucifiedQuad(BakedQuad baseQuad, double alpha)
 		{
 			BakedColors newColors = getTranslucifiedColors(baseQuad.bakedColors(), alpha);
+			SpriteInfo baseSpriteInfo = baseQuad.spriteInfo();
 			return new BakedQuad(
 				baseQuad.position0(),
 				baseQuad.position1(),
@@ -85,7 +89,11 @@ public enum PlacementPreviewModelLoader implements UnbakedModelLoader<CuboidMode
 				baseQuad.packedUV3(),
 				baseQuad.tintIndex(),
 				baseQuad.direction(),
-				baseQuad.spriteInfo(),
+				new SpriteInfo(
+					baseSpriteInfo.sprite(),
+					ChunkSectionLayer.TRANSLUCENT,
+					Sheets.translucentBlockItemSheet()
+				),
 				baseQuad.shade(),
 				baseQuad.lightEmission(),
 				baseQuad.bakedNormals(),

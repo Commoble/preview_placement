@@ -3,13 +3,10 @@ package net.commoble.preview_placement.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource.BufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.dispatch.ModelState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.state.level.BlockOutlineRenderState;
-import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.LightCoordsUtil;
@@ -19,12 +16,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.client.CustomBlockOutlineRenderer;
 
 public record PlacementPreview(ItemStack stack, ModelState rotation)
 {
 
-	public CustomBlockOutlineRenderer extractRenderState(Level level, BlockPos placePos, Player player)
+	public PlacementPreviewRenderState extractRenderState(Level level, BlockPos placePos, Player player)
 	{
 		Minecraft mc = Minecraft.getInstance();
 		ItemModelResolver resolver = mc.getItemModelResolver();
@@ -41,14 +37,12 @@ public record PlacementPreview(ItemStack stack, ModelState rotation)
 		BlockPos placePos,
 		ModelState rotation,
 		int packedLight
-		) implements CustomBlockOutlineRenderer
+		) 
 	{
 
-		@Override
-		public boolean render(BlockOutlineRenderState renderState, BufferSource buffer, PoseStack poseStack, boolean translucentPass, LevelRenderState levelRenderState)
+		public boolean render(PoseStack poseStack, Vec3 cameraPos, SubmitNodeCollector collector)
 		{
 			BlockPos pos = this.placePos;
-			Vec3 cameraPos = levelRenderState.cameraRenderState.pos;
 			
 			poseStack.pushPose();
 		
@@ -66,7 +60,6 @@ public record PlacementPreview(ItemStack stack, ModelState rotation)
 			// BER doesn't need this, why do we need it here?
 //			poseStack.translate(-0.5D,-0.5D,-0.5D);
 			
-			SubmitNodeCollector collector = Minecraft.getInstance().levelRenderer.submitNodeStorage;
 			this.itemState.submit(poseStack, collector, this.packedLight, OverlayTexture.NO_OVERLAY, 0);
 			
 			poseStack.popPose();
