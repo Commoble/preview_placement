@@ -23,12 +23,32 @@ dependencies {
 
 Available versions can be found on the maven: https://maven.commoble.net/net/commoble/preview_placement/preview_placement/
 
-Compiling against the mod enables datagen helpers in the PlacementPreviewDefinition class. If these sources aren't needed, cursemaven can be used instead for runtime-only dependencies: https://cursemaven.com/
+## Config
 
+A config file is created in the (minecraft instance)/config/preview-placement-client.toml which has the following values by default:
 
-## Placement Preview Files
+```toml
+#Render preview of specified blockitems
+showPlacementPreview = true
+#Opacity of the render preview
+# Default: 0.5
+# Range: 0.0 ~ 1.0
+previewPlacementOpacity = 0.5
+```
+
+## Placement Preview Tags (26.1+)
+
+In 26.1+, placement preview blocks/items are defined via the `preview_placement:placement_preview` item tag.
+
+This tag must be defined on the server so it can be sent to the client, though Preview Placement itself does not have to be on the server.
+
+Any blockitems in this item tag will have a placement preview rendered on the client. Currently, only BlockItems are supported.
+
+## Placement Preview Files (1.21.11 only)
 
 Placement Preview files specify which items should render placement previews and what model should be rendered for each blockstate which can be placed.
+
+Compiling against the mod enables datagen helpers in the PlacementPreviewDefinition class. If these sources aren't needed, cursemaven can be used instead for runtime-only dependencies: https://cursemaven.com/
 
 Placement Preview files must have file paths of the form assets/<modid>/preview_placement/placement_preview/<item>.json, where modid:item is the id of a BlockItem item.
 
@@ -121,17 +141,4 @@ Preview Placement provides a `preview_placement:placement_preview` model loader 
 		"parent": "block/dirt"
 	}
 }
-```
-
-## Config
-
-A config file is created in the (minecraft instance)/config/preview-placement-client.toml which has the following values by default:
-
-```
-#Render preview of items specified in preview_placement/placement_preview asset folder before placing them
-showPlacementPreview = true
-#Opacity of the render preview for models using the preview_placement:placement_preview model loader. Higher value = less transparent, lower = more transparent
-# Default: 0.5
-# Range: 0.0 ~ 1.0
-previewPlacementOpacity = 0.5
 ```

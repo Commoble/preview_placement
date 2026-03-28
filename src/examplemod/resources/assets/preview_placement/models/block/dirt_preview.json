@@ -1,6 +1,0 @@
-{
-	"loader": "preview_placement:placement_preview",
-	"model": {
-		"parent": "block/dirt"
-	}
-}
