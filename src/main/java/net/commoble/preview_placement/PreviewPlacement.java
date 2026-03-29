@@ -2,10 +2,7 @@ package net.commoble.preview_placement;
 
 import java.util.function.Function;
 
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.Item;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
@@ -13,8 +10,6 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public class PreviewPlacement
 {
 	public static final String MODID = "preview_placement";
-	
-	public static final TagKey<Item> PLACEMENT_PREVIEW_TAG = TagKey.create(Registries.ITEM, id("placement_preview"));
 	
 	public static Identifier id(String path)
 	{

@@ -3,9 +3,9 @@ package net.commoble.preview_placement.client;
 import org.jspecify.annotations.Nullable;
 
 import net.commoble.preview_placement.PreviewPlacement;
+import net.commoble.preview_placement.client.PlacementPreview.PlacementPreviewRenderState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.state.level.LevelRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,6 +15,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -24,7 +25,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.ExtractLevelRenderStateEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent;
 
 @Mod(value=PreviewPlacement.MODID, dist=Dist.CLIENT)
@@ -33,6 +36,18 @@ public class ClientProxy
 {
 	public static final ClientConfig CLIENTCONFIG = PreviewPlacement.config(PreviewPlacement.MODID, ModConfig.Type.CLIENT, ClientConfig::create);
 
+	@SubscribeEvent
+	public static void onRegisterModelLoaders(ModelEvent.RegisterLoaders event)
+	{
+		event.register(PreviewPlacement.id("placement_preview"), PlacementPreviewModelLoader.INSTANCE);
+	}
+	
+	@SubscribeEvent
+	public static void onAddClientReloadListeners(AddClientReloadListenersEvent event)
+	{
+		event.addListener(PreviewPlacement.id("placement_preview"), new PlacementPreviewReloadListener());
+	}
+	
 	private static final ContextKey<PlacementPreviewRenderState> PREVIEW_STATE_KEY = new ContextKey<>(PreviewPlacement.id(PreviewPlacement.MODID));
 	
 	@SubscribeEvent
@@ -42,25 +57,29 @@ public class ClientProxy
 		{
 			Minecraft mc = Minecraft.getInstance();
 			LocalPlayer player = mc.player;
-			BlockAndTintGetter world = mc.level;
-			if (world != null && player != null && mc.hitResult instanceof BlockHitResult blockHitResult && blockHitResult.getType() != HitResult.Type.MISS)
+			if (player != null && mc.hitResult instanceof BlockHitResult blockHitResult && blockHitResult.getType() != HitResult.Type.MISS)
 			{
 				InteractionHand hand = player.getUsedItemHand();
 				ItemStack stack = player.getItemInHand(hand);
 				Item item = stack.getItem();
-				if (item instanceof BlockItem blockItem && stack.is(PreviewPlacement.PLACEMENT_PREVIEW_TAG))
+				if (item instanceof BlockItem blockItem && PlacementPreviewReloadListener.doesItemHavePreview(blockItem))
 				{
 					Block block = blockItem.getBlock();
+					Level world = player.level();
 					Direction directionAwayFromTargetedBlock = blockHitResult.getDirection();
 					BlockPos placePos = blockHitResult.getBlockPos().relative(directionAwayFromTargetedBlock);
 					
 					BlockState existingState = world.getBlockState(placePos);
 					if (existingState.isAir() || existingState.canBeReplaced())
 					{
-						@Nullable BlockState state = block.getStateForPlacement(new BlockPlaceContext(player, hand, stack, blockHitResult));
+						BlockState state = block.getStateForPlacement(new BlockPlaceContext(player, hand, stack, blockHitResult));
 						if (state != null)
 						{
-							event.getRenderState().setRenderData(PREVIEW_STATE_KEY, PlacementPreviewRenderState.extract(world, placePos, state));
+							@Nullable PlacementPreview preview = PlacementPreviewReloadListener.getPlacementPreview(state);
+							if (preview != null)
+							{
+								event.getRenderState().setRenderData(PREVIEW_STATE_KEY, preview.extractRenderState(world, placePos, player));
+							}	
 						}					
 					}
 				}
