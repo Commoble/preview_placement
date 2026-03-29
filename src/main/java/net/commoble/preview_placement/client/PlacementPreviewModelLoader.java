@@ -12,7 +12,7 @@ import net.minecraft.client.resources.model.ResolvedModel;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.client.resources.model.cuboid.CuboidModel;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
-import net.minecraft.client.resources.model.geometry.BakedQuad.SpriteInfo;
+import net.minecraft.client.resources.model.geometry.BakedQuad.MaterialInfo;
 import net.minecraft.client.resources.model.geometry.QuadCollection;
 import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.core.Direction;
@@ -77,7 +77,7 @@ public enum PlacementPreviewModelLoader implements UnbakedModelLoader<CuboidMode
 		private static BakedQuad getTranslucifiedQuad(BakedQuad baseQuad, double alpha)
 		{
 			BakedColors newColors = getTranslucifiedColors(baseQuad.bakedColors(), alpha);
-			SpriteInfo baseSpriteInfo = baseQuad.spriteInfo();
+			MaterialInfo baseMat = baseQuad.materialInfo();
 			return new BakedQuad(
 				baseQuad.position0(),
 				baseQuad.position1(),
@@ -87,18 +87,17 @@ public enum PlacementPreviewModelLoader implements UnbakedModelLoader<CuboidMode
 				baseQuad.packedUV1(),
 				baseQuad.packedUV2(),
 				baseQuad.packedUV3(),
-				baseQuad.tintIndex(),
 				baseQuad.direction(),
-				new SpriteInfo(
-					baseSpriteInfo.sprite(),
+				new MaterialInfo(
+					baseMat.sprite(),
 					ChunkSectionLayer.TRANSLUCENT,
-					Sheets.translucentBlockItemSheet()
-				),
-				baseQuad.shade(),
-				baseQuad.lightEmission(),
+					Sheets.translucentBlockItemSheet(),
+					baseMat.tintIndex(),
+					baseMat.shade(),
+					baseMat.lightEmission(),
+					baseMat.ambientOcclusion()),
 				baseQuad.bakedNormals(),
-				newColors,
-				baseQuad.hasAmbientOcclusion());
+				newColors);
 		}
 
 		private static BakedColors getTranslucifiedColors(BakedColors baseColors, double alpha)
