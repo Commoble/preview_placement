@@ -36,7 +36,13 @@ Data-driven block placement previews
 '''
 [[accessTransformers]]
 	file="META-INF/accesstransformer.cfg"
-[[dependencies.exmachina]]
+[[dependencies.preview_placement]]
+    modId="neoforge"
+    mandatory=true
+    versionRange="[26.1.2.48-beta,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.preview_placement]]
     modId="minecraft"
     mandatory=true
     versionRange="[26.1,26.2)"

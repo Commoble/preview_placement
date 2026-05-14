@@ -45,7 +45,8 @@ public enum PlacementPreviewModelLoader implements UnbakedModelLoader<CuboidMode
 			baseModel.textureSlots(),
 			baseModel.parent(),
 			baseModel.rootTransform(),
-			baseModel.partVisibility());
+			baseModel.partVisibility(),
+			baseModel.itemLayerFaceData());
 	}
 	
 	public static record PlacementPreviewModelGeometry(UnbakedModel baseModel) implements ExtendedUnbakedGeometry
